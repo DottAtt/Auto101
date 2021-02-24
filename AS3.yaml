@@ -1,0 +1,36 @@
+--- 
+- name: DEPLOY AS3 DEC
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+
+  vars:
+  
+  vars_files:
+    - ../Creds/big_creds.yaml 
+  tasks:
+
+    - name: Create an AS3 
+      uri:
+        url: https://18.134.162.22/mgmt/shared/appsvcs/declare
+        user: "{{bigip_user}}"
+        password: "{{bigip_pass}}"
+        method: POST
+        body: "{{ lookup('file','AS3.json') }}"
+        force_basic_auth: yes
+        status_code: 200
+        body_format: json
+        validate_certs: no
+      register: as3_output
+
+    - name: Write AS3 Output
+      debug:
+        msg: "My AS3 output {{ as3_output }}"
+
+    - name: Search For content lenght
+      debug:
+        msg: "Content Length =  {{ as3_output.content_length }}"
+
+
+...
